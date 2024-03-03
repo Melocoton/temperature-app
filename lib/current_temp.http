@@ -1,0 +1,4 @@
+GET http://raspberry.lan:9001/current
+Accept: application/json
+
+###
