@@ -2,8 +2,8 @@ import 'dart:convert';
 
 class Record {
   final int time;
-  final int temperature;
-  final int humidity;
+  final num temperature;
+  final num humidity;
 
   Record({
     required this.time,
@@ -13,8 +13,8 @@ class Record {
 
   Record copyWith({
     int? time,
-    int? temperature,
-    int? humidity,
+    num? temperature,
+    num? humidity,
   }) =>
       Record(
         time: time ?? this.time,

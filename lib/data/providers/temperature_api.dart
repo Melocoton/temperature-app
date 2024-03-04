@@ -28,7 +28,12 @@ class TemperatureApi{
   }
 
   Future<List<Record>> getHistory(int id, DateTime startDate, DateTime endDate) async {
-    var response = await http.get(Uri.http(url, 'current/$id/${startDate.millisecondsSinceEpoch}-${endDate.millisecondsSinceEpoch}'));
+    // ${startDate.millisecondsSinceEpoch}-${endDate.millisecondsSinceEpoch}
+    var response = await http.get(Uri.http(url, 'history/$id', {
+      'rangeStart': startDate.millisecondsSinceEpoch.toString(),
+      'rangeEnd': endDate.millisecondsSinceEpoch.toString(),
+      'smooth': true.toString()
+    }));
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body) as List<dynamic>;
       return data.map((e) => Record.fromJson(e)).toList();
