@@ -29,7 +29,7 @@ class _HistoryPageState extends State<HistoryPage> {
     var data = await TemperatureApi().getHistory(
       widget.id,
       timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(hours: 24)),
-      timeRange != null ? timeRange.end : DateTime.now(),
+      timeRange != null ? timeRange.end.add(const Duration(hours: 24)) : DateTime.now(),
     );
     setState(() {
       _history = data;
