@@ -22,18 +22,29 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-    _loadHistory();
+    _loadHistory(null);
   }
 
-  void _loadHistory() async {
+  void _loadHistory(DateTimeRange? timeRange) async {
     var data = await TemperatureApi().getHistory(
       widget.id,
-      DateTime.now().subtract(const Duration(hours: 24)),
-      DateTime.now(),
+      timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(hours: 24)),
+      timeRange != null ? timeRange.end : DateTime.now(),
     );
     setState(() {
       _history = data;
     });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTimeRange? pickedRange = await showDateRangePicker(
+        context: context,
+        firstDate: DateTime(2024),
+        lastDate: DateTime(2101)
+    );
+    if (pickedRange != null) {
+      _loadHistory(pickedRange);
+    }
   }
 
   @override
@@ -45,6 +56,20 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       body: ListView(
         children: [
+          SizedBox(
+            child: Row(
+              children: [
+                TextButton(
+                  onPressed: () => _selectDate(context),
+                  child: const Icon(Icons.calendar_month),
+                ),
+                TextButton(
+                  onPressed: () => _loadHistory(null),
+                  child: const Text('Ultimas 24h'),
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             child: Card(
               child: Column(
