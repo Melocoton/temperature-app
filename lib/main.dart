@@ -159,5 +159,5 @@ String dateFormat(DateTime date){
 }
 
 String getDeviceName(int id) {
-  return _deviceList.firstWhere((element) => element.id == id).description;
+  return _deviceList.firstWhere((element) => element.id == id, orElse: () => Device(id: id, description: id.toString())).description;
 }
