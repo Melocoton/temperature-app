@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:temperature_app/data/models/temperature.dart';
 import 'package:temperature_app/data/providers/temperature_api.dart';
+import 'package:temperature_app/data/state/mainState.dart';
 import 'package:temperature_app/history.dart';
 
 import 'data/models/device.dart';
@@ -49,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initialLoad() async{
+    MainState().token = await TemperatureApi().authenticate();
     _deviceList = await TemperatureApi().getDevices();
     _loadCurrentTemperature();
   }
