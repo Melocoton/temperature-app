@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:temperature_app/data/models/summary.dart';
 import 'package:temperature_app/data/models/apiAuth.dart';
 import 'package:temperature_app/data/models/device.dart';
 import 'package:temperature_app/data/models/temperature.dart';
@@ -43,6 +44,19 @@ class TemperatureApi{
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body) as List<dynamic>;
       return data.map((e) => Record.fromJson(e)).toList();
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<Summary>> getSummary(int id, DateTime startDate, DateTime endDate) async {
+    var response = await http.get(Uri.http(url, 'summary/$id', {
+      'rangeStart': startDate.millisecondsSinceEpoch.toString(),
+      'rangeEnd': endDate.millisecondsSinceEpoch.toString()
+    }), headers: getHeader(true));
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((e) => Summary.fromJson(e)).toList();
     } else {
       return [];
     }

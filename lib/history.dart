@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:temperature_app/data/models/record.dart';
 import 'package:temperature_app/data/providers/temperature_api.dart';
 
+import 'data/models/summary.dart';
+
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key, required this.title, required this.id});
 
@@ -18,6 +20,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   List<Record> _history = [];
+  List<Summary> _summary = [];
 
   @override
   void initState() {
@@ -31,8 +34,14 @@ class _HistoryPageState extends State<HistoryPage> {
       timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(hours: 24)),
       timeRange != null ? timeRange.end.add(const Duration(hours: 24)) : DateTime.now(),
     );
+    var summData = await TemperatureApi().getSummary(
+      widget.id,
+      timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(days: 30)),
+      timeRange != null ? timeRange.end.add(const Duration(hours: 24)) : DateTime.now(),
+    );
     setState(() {
       _history = data;
+      _summary = summData;
     });
   }
 
@@ -98,7 +107,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         borderData: FlBorderData(),
                         lineBarsData: [
                           LineChartBarData(
-                            isCurved: false,
+                            isCurved: true,
                             dotData: const FlDotData(show: false),
                             spots: _history.map((e) => FlSpot(e.time.toDouble(), e.temperature.toDouble())).toList()
                           ),
@@ -142,7 +151,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         lineBarsData: [
                           LineChartBarData(
                             color: Colors.orange,
-                            isCurved: false,
+                            isCurved: true,
                             dotData: const FlDotData(show: false),
                             spots: _history.map((e) => FlSpot(e.time.toDouble(), e.humidity.toDouble())).toList()
                           ),
@@ -151,6 +160,102 @@ class _HistoryPageState extends State<HistoryPage> {
                         minY: 0,
                       ),
                       duration: const Duration(milliseconds: 250),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            child: Card(
+              child: Column(
+                children: [
+                  const Text('Temperatura Max/Min', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  AspectRatio(
+                    aspectRatio: 2 / 1,
+                    child: BarChart(
+                      BarChartData(
+                        barGroups: _summary.map((e) =>
+                          BarChartGroupData(
+                            x: e.time.millisecondsSinceEpoch,
+                            barRods: [
+                              BarChartRodData(
+                                toY: e.maxTemp.toDouble(),
+                                color: Colors.red,
+                                width: 5
+                              ),
+                              BarChartRodData(
+                                toY: e.minTem.toDouble(),
+                                color: Colors.blue,
+                                width: 5
+                              )
+                            ]
+                          )
+                        ).toList(),
+                        titlesData: const FlTitlesData(
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 50,
+                              getTitlesWidget: dayTitleWidget,
+                            )
+                          )
+                        ),
+                        maxY: _summary.isNotEmpty ? _summary.map((e) => e.maxTemp).reduce(max).roundToDouble() + 5 : 0,
+                        minY: _summary.isNotEmpty ? _summary.map((e) => e.minTem).reduce(min).roundToDouble() < 0 ? _summary.map((e) => e.maxTemp).reduce(max).roundToDouble() - 5 : 0 : 0,
+                      ),
+                      swapAnimationDuration: const Duration(milliseconds: 250),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            child: Card(
+              child: Column(
+                children: [
+                  const Text('Humedad Max/Min', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  AspectRatio(
+                    aspectRatio: 2 / 1,
+                    child: BarChart(
+                      BarChartData(
+                        barGroups: _summary.map((e) =>
+                            BarChartGroupData(
+                                x: e.time.millisecondsSinceEpoch,
+                                barRods: [
+                                  BarChartRodData(
+                                      toY: e.maxHum.toDouble(),
+                                      color: Colors.red,
+                                      width: 5
+                                  ),
+                                  BarChartRodData(
+                                      toY: e.minHum.toDouble(),
+                                      color: Colors.blue,
+                                      width: 5
+                                  )
+                                ]
+                            )
+                        ).toList(),
+                        titlesData: const FlTitlesData(
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 50,
+                                  getTitlesWidget: dayTitleWidget,
+                                )
+                            )
+                        ),
+                        maxY: _summary.isNotEmpty ? _summary.map((e) => e.maxHum).reduce(max).roundToDouble() + 5 : 0,
+                        minY: 0,
+                      ),
+                      swapAnimationDuration: const Duration(milliseconds: 250),
                     ),
                   )
                 ],
@@ -165,6 +270,16 @@ class _HistoryPageState extends State<HistoryPage> {
 
 Widget timeTitleWidget(double value, TitleMeta meta) {
   String fecha = DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(value.toInt()));
+
+  Widget text = RotationTransition(
+    turns: const AlwaysStoppedAnimation(45 / 360),
+    child: Text(fecha),
+  );
+  return SideTitleWidget(axisSide: meta.axisSide, space: 10, child: text);
+}
+
+Widget dayTitleWidget(double value, TitleMeta meta) {
+  String fecha = DateFormat.MMMd().format(DateTime.fromMillisecondsSinceEpoch(value.toInt()));
 
   Widget text = RotationTransition(
     turns: const AlwaysStoppedAnimation(45 / 360),
