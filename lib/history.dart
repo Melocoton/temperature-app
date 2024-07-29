@@ -39,10 +39,12 @@ class _HistoryPageState extends State<HistoryPage> {
       timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(days: 30)),
       timeRange != null ? timeRange.end.add(const Duration(hours: 24)) : DateTime.now(),
     );
-    setState(() {
-      _history = data;
-      _summary = summData;
-    });
+    if (mounted) {
+      setState(() {
+        _history = data;
+        _summary = summData;
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {

@@ -105,7 +105,7 @@ class DataCard extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryPage(title: 'Historico', id: temperatureData.id)))
       },
       child: Card(
-          color: Theme.of(context).colorScheme.background,
+          color: const Color.fromARGB(255, 236, 245, 244),
           margin: const EdgeInsets.all(10),
           child: SizedBox(
             width: double.infinity,
