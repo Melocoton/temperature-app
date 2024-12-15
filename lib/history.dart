@@ -184,12 +184,26 @@ class _HistoryPageState extends State<HistoryPage> {
                               BarChartRodData(
                                 toY: e.maxTemp.toDouble(),
                                 color: Colors.red,
-                                width: 15
+                                width: 15,
+                                borderRadius: e.maxTemp > 0 ? const BorderRadius.vertical(
+                                    top: Radius.circular(5),
+                                    bottom: Radius.zero
+                                ) : const BorderRadius.vertical(
+                                    top: Radius.zero,
+                                    bottom: Radius.circular(5)
+                                )
                               ),
                               BarChartRodData(
                                 toY: e.minTem.toDouble(),
                                 color: Colors.blue,
-                                width: 15
+                                width: 15,
+                                borderRadius: e.minTem > 0 ? const BorderRadius.vertical(
+                                    top: Radius.circular(5),
+                                    bottom: Radius.zero
+                                ) : const BorderRadius.vertical(
+                                    top: Radius.zero,
+                                    bottom: Radius.circular(5)
+                                )
                               )
                             ]
                           )
@@ -232,12 +246,26 @@ class _HistoryPageState extends State<HistoryPage> {
                                   BarChartRodData(
                                       toY: e.maxHum.toDouble(),
                                       color: Colors.red,
-                                      width: 15
+                                      width: 15,
+                                      borderRadius: e.maxHum > 0 ? const BorderRadius.vertical(
+                                          top: Radius.circular(5),
+                                          bottom: Radius.zero
+                                      ) : const BorderRadius.vertical(
+                                          top: Radius.zero,
+                                          bottom: Radius.circular(5)
+                                      )
                                   ),
                                   BarChartRodData(
                                       toY: e.minHum.toDouble(),
                                       color: Colors.blue,
-                                      width: 15
+                                      width: 15,
+                                      borderRadius: e.minHum > 0 ? const BorderRadius.vertical(
+                                          top: Radius.circular(5),
+                                          bottom: Radius.zero
+                                      ) : const BorderRadius.vertical(
+                                          top: Radius.zero,
+                                          bottom: Radius.circular(5)
+                                      )
                                   )
                                 ]
                             )
