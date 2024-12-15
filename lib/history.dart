@@ -36,7 +36,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
     var summData = await TemperatureApi().getSummary(
       widget.id,
-      timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(days: 30)),
+      timeRange != null ? timeRange.start : DateTime.now().subtract(const Duration(days: 7)),
       timeRange != null ? timeRange.end.add(const Duration(hours: 24)) : DateTime.now(),
     );
     if (mounted) {
@@ -184,12 +184,12 @@ class _HistoryPageState extends State<HistoryPage> {
                               BarChartRodData(
                                 toY: e.maxTemp.toDouble(),
                                 color: Colors.red,
-                                width: 5
+                                width: 15
                               ),
                               BarChartRodData(
                                 toY: e.minTem.toDouble(),
                                 color: Colors.blue,
-                                width: 5
+                                width: 15
                               )
                             ]
                           )
@@ -207,7 +207,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           )
                         ),
                         maxY: _summary.isNotEmpty ? _summary.map((e) => e.maxTemp).reduce(max).roundToDouble() + 5 : 0,
-                        minY: _summary.isNotEmpty ? _summary.map((e) => e.minTem).reduce(min).roundToDouble() < 0 ? _summary.map((e) => e.maxTemp).reduce(max).roundToDouble() - 5 : 0 : 0,
+                        minY: _summary.isNotEmpty ? _summary.map((e) => e.minTem).reduce(min).roundToDouble() < 0 ? _summary.map((e) => e.minTem).reduce(min).roundToDouble() - 3 : 0 : 0,
                       ),
                       swapAnimationDuration: const Duration(milliseconds: 250),
                     ),
@@ -232,12 +232,12 @@ class _HistoryPageState extends State<HistoryPage> {
                                   BarChartRodData(
                                       toY: e.maxHum.toDouble(),
                                       color: Colors.red,
-                                      width: 5
+                                      width: 15
                                   ),
                                   BarChartRodData(
                                       toY: e.minHum.toDouble(),
                                       color: Colors.blue,
-                                      width: 5
+                                      width: 15
                                   )
                                 ]
                             )
